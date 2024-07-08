@@ -14,7 +14,7 @@ export class AccountsComponent {
   currentPage : number=0;
   pageSize : number = 5;
   accountObservable! : Observable<AccountDetails>
-  operationsFormGroup! : FormGroup
+  operationFormGroup! : FormGroup
 
   constructor(private fb : FormBuilder, private accountService : AccountsService) {
   }
@@ -24,7 +24,7 @@ export class AccountsComponent {
     this.accountFormGroup=this.fb.group({
       accountId : this.fb.control('')
     });
-    this.operationsFormGroup=this.fb.group({
+    this.operationFormGroup=this.fb.group({
       operationType : this.fb.control(null),
       amount : this.fb.control(0),
       description : this.fb.control(null),
@@ -43,6 +43,52 @@ export class AccountsComponent {
   }
 
   handleAccountOperation() {
+    let accountId :string = this.accountFormGroup.value.accountId;
+    console.log('Account ID:', accountId);
+    if (!accountId) {
+      alert('Account ID is required');
+      return;
+    }
+    let operationType=this.operationFormGroup.value.operationType;
+    let amount :number =this.operationFormGroup.value.amount;
+    let description :string =this.operationFormGroup.value.description;
+    let accountDestination :string =this.operationFormGroup.value.accountDestination;
+    console.log("Form Values:", this.operationFormGroup.value);
+    if(operationType=='DEBIT'){
+      this.accountService.debit(accountId, amount,description).subscribe({
+        next : (data)=>{
+          alert("Success Credit");
+          this.operationFormGroup.reset();
+          this.handleSearchAccount();
+        },
+        error : (err)=>{
+          console.log(err);
+        }
+      });
+    } else if(operationType=='CREDIT'){
+      this.accountService.credit(accountId, amount,description).subscribe({
+        next : (data)=>{
+          alert("Success Debit");
+          this.operationFormGroup.reset();
+          this.handleSearchAccount();
+        },
+        error : (err)=>{
+          console.log(err);
+        }
+      });
+    }
+    else if(operationType=='TRANSFER'){
+      this.accountService.transfer(accountId,accountDestination, amount,description).subscribe({
+        next : (data)=>{
+          alert("Success Transfer");
+          this.operationFormGroup.reset();
+          this.handleSearchAccount();
+        },
+        error : (err)=>{
+          console.log(err);
+        }
+      });
 
+    }
   }
 }
