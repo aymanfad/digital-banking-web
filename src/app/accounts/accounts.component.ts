@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {AccountsService} from "../serivces/accounts.service";
-import {Observable} from "rxjs";
+import {catchError, Observable, throwError} from "rxjs";
 import {AccountDetails} from "../model/account.model";
 
 @Component({
@@ -15,6 +15,7 @@ export class AccountsComponent {
   pageSize : number = 5;
   accountObservable! : Observable<AccountDetails>
   operationFormGroup! : FormGroup
+  errorMessage! : string;
 
   constructor(private fb : FormBuilder, private accountService : AccountsService) {
   }
@@ -34,7 +35,12 @@ export class AccountsComponent {
 
   handleSearchAccount() {
     let accountId : string=this.accountFormGroup.value.accountId;
-    this.accountObservable=this.accountService.getAccount(accountId,this.currentPage, this.pageSize);
+    this.accountObservable=this.accountService.getAccount(accountId,this.currentPage, this.pageSize).pipe(
+      catchError(err => {
+        this.errorMessage=err.message;
+        return throwError(err);
+      })
+    );
   }
 
   gotoPage(page: number) {
@@ -68,7 +74,7 @@ export class AccountsComponent {
     } else if(operationType=='CREDIT'){
       this.accountService.credit(accountId, amount,description).subscribe({
         next : (data)=>{
-          alert("Success Debit");
+          alert("Success Credit");
           this.operationFormGroup.reset();
           this.handleSearchAccount();
         },

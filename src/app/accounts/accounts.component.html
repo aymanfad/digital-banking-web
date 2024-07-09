@@ -14,8 +14,14 @@
               </button>
             </div>
           </form>
+          <ng-template #errorTemplate>
+            <ng-container *ngIf="errorMessage ">
+              <div class="text-danger">{{errorMessage}}</div>
+            </ng-container>
 
-          <ng-container *ngIf="accountObservable | async as accountDetails">
+          </ng-template>
+
+          <ng-container *ngIf="accountObservable | async as accountDetails; else errorTemplate">
             <div class="mb-2">
               <label>Account ID :</label>
               <label><strong>{{accountDetails.accountId}}</strong></label>
