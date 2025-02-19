@@ -29,7 +29,7 @@ export class CustomersComponent implements OnInit{
     this.customers=this.customerService.searchCustomers(kw).pipe(
       catchError(err => {
         this.errorMessage=err.message;
-        return throwError(err);
+        return throwError(() => new Error('test'));
       })
     );
   }
