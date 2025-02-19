@@ -15,7 +15,7 @@ export class CustomersComponent implements OnInit{
   errorMessage! : string;
   searchFormGroup : FormGroup | undefined;
 
-  constructor(private customerService: CustomerService,private fb: FormBuilder,private routter : Router) {  }
+  constructor(private customerService: CustomerService,private fb: FormBuilder,private router : Router) {  }
 
   ngOnInit():void {
     this.searchFormGroup=this.fb.group({
@@ -54,6 +54,6 @@ export class CustomersComponent implements OnInit{
   }
 
   handleDeleteCustomerAccounts(customer: Customer) {
-    this.routter.navigateByUrl("/customer-accounts/"+customer.id,{state : customer});
+    this.router.navigateByUrl("/customer-accounts/"+customer.id,{state : customer});
   }
 }
